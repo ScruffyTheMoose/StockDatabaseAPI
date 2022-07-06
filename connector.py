@@ -1,6 +1,6 @@
 # https://www.opentechguides.com/how-to/article/python/210/flask-mysql-crud.html
 
-from getpass import getpass, getuser
+from getpass import getpass
 
 from flask import Flask, jsonify, request
 from flaskext.mysql import MySQL
@@ -16,7 +16,7 @@ mysql = MySQL()
 api = Api(app)
 
 # setting DB credentials
-app.config["MYSQL_DATABASE_USER"] = getuser("Username: ")
+app.config["MYSQL_DATABASE_USER"] = input("Username: ")
 app.config["MYSQL_DATABASE_PASSWORD"] = getpass("Password: ")
 app.config["MYSQL_DATABASE_DB"] = "sp500_db"
 app.config["MYSQL_DATABASE_HOST"] = "localhost"
@@ -119,3 +119,7 @@ class Tickers(Resource):
 
 # API resource routes
 api.add_resource(Tickers, "/tickers", endpoint="tickers")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
