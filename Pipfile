@@ -4,9 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-mysql-connector-python = "*"
 flask = "*"
 yahoo-fin = "*"
+flask-mysql = "*"
+flask-restful = "*"
 
 [dev-packages]
 
