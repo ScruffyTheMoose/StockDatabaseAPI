@@ -1,14 +1,10 @@
 # https://www.opentechguides.com/how-to/article/python/210/flask-mysql-crud.html
 
-from email import message
 from getpass import getpass, getuser
-from urllib import response
 
 from flask import Flask, jsonify, request
 from flaskext.mysql import MySQL
 from flask_restful import Resource, Api
-from itsdangerous import json
-from regex import E
 
 # init flask instance
 app = Flask(__name__)
