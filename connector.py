@@ -1,5 +1,6 @@
 # https://www.opentechguides.com/how-to/article/python/210/flask-mysql-crud.html
 
+from email import message
 from getpass import getpass
 
 from flask import Flask, jsonify, request
@@ -60,13 +61,15 @@ class Tickers(Resource):
             cursor = cnx.cursor()
 
             _ticker = request.form["ticker"]
+
             create_table = f"""
                 CREATE TABLE {_ticker} (
+                    date VARCHAR(10),
                     High float(2),
                     Low float(2),
                     Open float(2),
                     Close float(2),
-                    Volume int
+                    Volume int(12)
                 );
             """
 
@@ -96,6 +99,7 @@ class Tickers(Resource):
             cursor = cnx.cursor()
 
             _ticker = request.form["ticker"]
+
             delete_table = f"""
                 DROP TABLE {_ticker};
             """
@@ -117,8 +121,112 @@ class Tickers(Resource):
             return response
 
 
+class CompanyData(Resource):
+    def get(self):
+        try:
+            cnx = mysql.connect()
+            cursor = cnx.cursor()
+
+            _ticker = request.args["ticker"]
+            _start_date = request.args["start_date"]
+            _end_date = request.args["end_date"]
+
+            get_data = f"""
+                SELECT * FROM {_ticker} WHERE date >= '{_start_date}' AND date <= '{_end_date}';
+            """
+
+            cursor.execute(get_data)
+            data = cursor.fetchall()
+
+            response = jsonify(data)
+            response.status_code = 200
+
+        except Exception as e:
+            print(e)
+            response = jsonify(
+                message=f"Failed to retrieve data for {_ticker} between dates {_start_date} and {_end_date}"
+            )
+            response.status_code = 400
+
+        finally:
+            cursor.close()
+            cnx.close()
+            return response
+
+    def post(self):
+        try:
+            cnx = mysql.connect()
+            cursor = cnx.cursor()
+
+            _ticker = request.form["ticker"]
+            _date = request.form["date"]
+            _high = request.form["high"]
+            _low = request.form["low"]
+            _open = request.form["open"]
+            _close = request.form["close"]
+            _volume = request.form["volume"]
+
+            add_price_data = f"""
+                INSERT INTO {_ticker}(date, high, low, open, close, volume) VALUES ({_date}, {_high}, {_low}, {_open}, {_close}, {_volume});
+            """
+
+            cursor.execute(add_price_data)
+            cnx.commit()
+
+            response = jsonify(
+                message=f"Successfully inserted price data for {_ticker} for date {_date}"
+            )
+            response.status_code = 200
+
+        except Exception as e:
+            print(e)
+            response = jsonify(
+                message=f"Failed to insert price data for {_ticker} for date {_date}"
+            )
+            response.status_code = 400
+
+        finally:
+            cursor.close()
+            cnx.close()
+            return response
+
+    def delete(self):
+        try:
+            cnx = mysql.connect()
+            cursor = cnx.cursor()
+
+            _ticker = request.form["ticker"]
+            _start_date = request.form["start_date"]
+            _end_date = request.form["end_date"]
+
+            delete_data = f"""
+                DELETE FROM {_ticker} WHERE date >= '{_start_date}'AND date <= '{_end_date}';
+            """
+
+            cursor.execute(delete_data)
+            cnx.commit()
+
+            response = jsonify(
+                message=f"Successfully deleted price data for {_ticker} between dates {_start_date} and {_end_date}"
+            )
+            response.status_code = 200
+
+        except Exception as e:
+            print(e)
+            response = jsonify(
+                message=f"Failed to delete price data for {_ticker} between dates {_start_date} and {_end_date}"
+            )
+            response.status_code = 400
+
+        finally:
+            cursor.close()
+            cnx.close()
+            return response
+
+
 # API resource routes
 api.add_resource(Tickers, "/tickers", endpoint="tickers")
+api.add_resource(CompanyData, "/data", endpoint="data")
 
 
 if __name__ == "__main__":
