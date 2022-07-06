@@ -1,6 +1,5 @@
 # https://www.opentechguides.com/how-to/article/python/210/flask-mysql-crud.html
 
-from email import message
 from getpass import getpass
 
 from flask import Flask, jsonify, request
