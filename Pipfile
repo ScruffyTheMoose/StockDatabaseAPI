@@ -9,6 +9,7 @@ yahoo-fin = "*"
 flask-mysql = "*"
 flask-restful = "*"
 requests = "*"
+schedule = "*"
 
 [dev-packages]
 

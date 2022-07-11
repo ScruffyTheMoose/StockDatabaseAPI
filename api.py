@@ -37,8 +37,9 @@ class Tickers(Resource):
 
             cursor.execute("SHOW TABLES;")
             tickers = [i[0] for i in cursor.fetchall()]  # unpacking tuples
+            data = {"tickers": tickers}
 
-            response = jsonify(tickers)
+            response = jsonify(data)
             response.status_code = 200
 
         except Exception as e:
@@ -135,7 +136,8 @@ class CompanyData(Resource):
             """
 
             cursor.execute(get_data)
-            data = cursor.fetchall()
+            company_data = cursor.fetchall()
+            data = {"data": company_data}
 
             response = jsonify(data)
             response.status_code = 200
@@ -229,4 +231,4 @@ api.add_resource(CompanyData, "/data", endpoint="data")
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
